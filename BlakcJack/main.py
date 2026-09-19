@@ -54,20 +54,23 @@ def dealercards(deck, index, add):
         print(" ___\n|## |\n|###|\n|_##|")
         if add:
             dealersCards.append(index)
-        CardDyslpay(deck, dealersCards)
+        CardDyslpay(deck, [1, 2])
 
 def CardDyslpay(deck, indexs):
     for i in range(len(indexs)):
-        print(f" {_topBorder}  ",end="")
+        print(f" {_topBorder} ",end=" ")
     print("\n",end="")
     for i in range(len(indexs)):
-        print(f"|{deck[indexs[i]][1]}{_spacing}|",end="")
+        print(f"|{deck[indexs[i]][1]}{_spacing}|",end=" ")
     print("\n",end="")
     for i in range(len(indexs)):
-        print(f"| {deck[indexs[i]][0]} |",end="")
+        if deck[indexs[i]][0] == "10":
+            print(f"|{deck[indexs[i]][0]} |",end=" ")
+        else:
+            print(f"| {deck[indexs[i]][0]} |",end=" ")
     print("\n",end="")
     for i in range(len(indexs)):
-        print(f"|{_bottomBorder}{deck[indexs[i]][1]}|",end="")
+        print(f"|{_bottomBorder}{deck[indexs[i]][1]}|",end=" ")
     print("\n",end="")
 
     
