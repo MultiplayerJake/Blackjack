@@ -1,16 +1,21 @@
 import random
 
-#Starter VAlues
+#Starter Values
 money = 5000
 suits = ('♥', '♦', '♠', '♣')
 _singleDeck = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 deckindex = 0
 game = True
 
+
+#Decks:
 deckValues = _singleDeck * 4
+deckValues = list(deckValues)
+deckValues.append("#")
 
 deckSuits = (suit for suit in suits for _ in _singleDeck)
 deckSuits = list(deckSuits)
+deckSuits.append("#")
 
 dealersCards = []
 playersCards = []
@@ -45,7 +50,7 @@ def gameLoop(deck, deckindex):
         if i == 1:
             dealercards(deck, deckindex, True)
         else:
-            deckindex(deck, deckindex, False)
+            dealercards(deck, deckindex, False)
         deckindex += 1
         return
 
@@ -54,7 +59,7 @@ def dealercards(deck, index, add):
         print(" ___\n|## |\n|###|\n|_##|")
         if add:
             dealersCards.append(index)
-        CardDyslpay(deck, [1, 2])
+        CardDyslpay(deck, dealersCards)
 
 def CardDyslpay(deck, indexs):
     for i in range(len(indexs)):
