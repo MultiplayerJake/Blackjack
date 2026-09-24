@@ -11,11 +11,9 @@ game = True
 #Decks:
 deckValues = _singleDeck * 4
 deckValues = list(deckValues)
-deckValues.append("#")
 
 deckSuits = (suit for suit in suits for _ in _singleDeck)
 deckSuits = list(deckSuits)
-deckSuits.append("#")
 
 dealersCards = []
 playersCards = []
@@ -29,6 +27,7 @@ _bottomBorder = "_" * 2
 def deckShuffle():
     deck = list(zip(deckValues, deckSuits))
     random.shuffle(deck)
+    deck.append(("#", "#"))
     return deck
 
 
@@ -48,15 +47,18 @@ def gameLoop(deck, deckindex):
     while game:
         print("DEALER: ???")
         if i == 1:
-            dealercards(deck, deckindex, True)
+            dealercardsDysplay(deck, deckindex, True)
         else:
-            dealercards(deck, deckindex, False)
+            dealercardsDysplay(deck, deckindex, False)
         deckindex += 1
         return
 
 
-def dealercards(deck, index, add):
-        print(" ___\n|## |\n|###|\n|_##|")
+def dealercardsDysplay(deck, index, add):
+        print(deckValues)
+        dealersCards.append(len(deck)-1)
+        if add == False:
+            dealersCards.append(len(deck)-1)
         if add:
             dealersCards.append(index)
         CardDyslpay(deck, dealersCards)
