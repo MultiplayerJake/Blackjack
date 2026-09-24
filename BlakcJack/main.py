@@ -38,26 +38,78 @@ def gameStart():
         bet = input("How much do you bet? (1-5000, or QUIT)\n>")
         try:
             bet = int(bet)
-            return
+            return bet
         except:
-            ...
+            print("Error: Please enter a valid number or 'QUIT' to exit the game.")
+        
 
-def gameLoop(deck, deckindex):
+def gameLoop(deck, deckindex, bet):
     i = 1
-    while game:
+    while True:
         print("DEALER: ???")
         if i == 1:
-            dealercardsDysplay(deck, deckindex, True)
+            dealercardsDysplay(deck, deckindex, True, True)
+            deckindex += 1
         else:
-            dealercardsDysplay(deck, deckindex, False)
-        deckindex += 1
-        return
+            dealercardsDysplay(deck, deckindex, False, False)
+        print("PLAYER: ")
+        if i == 1:
+            deckindex = addPlayerCard(deckindex)
+            deckindex = addPlayerCard(deckindex)
+        CardDyslpay(deck, playersCards)
+        playerchse = plyaerchosing(True, deck, deckindex, bet)
+        if playerchse == "end":
+            break
+        i += 1
+    endGame()
 
+def plyaerchosing(first, deck, deckindex, bet):
+    while True:
+        if first:
+            choice = input("Do you want to hit or stand or Double? (H/S/D)\n>")
+        else: 
+            choice = input("Do you want to hit or stand? (H/S)\n>")
+        if choice.lower() == "h":
+            playerHit(deck, deckindex)
+            break
+        elif choice.lower() == "s":
+            playerStand()
+            return "end"
+        elif choice.lower() == "d" and first:
+            print("You chose to hit.")
+            playerDouble(deck, deckindex, bet)
+            break
+        else:
+            print("Please enter 'H' to hit or 'S' to stand.")
+        first = False
 
-def dealercardsDysplay(deck, index, add):
-        print(deckValues)
-        dealersCards.append(len(deck)-1)
-        if add == False:
+def playerHit(deck, deckindex):
+    deckindex = addPlayerCard(deckindex)
+    CardDyslpay(deck, playersCards)
+    return
+
+def playerStand():
+    print("You chose to stand.")
+    return
+
+def playerDouble(deck, deckindex, bet):
+    print("You chose to double.")
+    bet = bet * 2
+    print(f"Your bet is now {bet} coins.")
+    playerHit(deck, deckindex)
+    return
+
+def addPlayerCard(deckindex):
+    playersCards.append(deckindex)
+    deckindex += 1
+    return deckindex
+
+def endGame():
+    print("Game Over. Thanks for playing!")
+    return
+
+def dealercardsDysplay(deck, index, add, first):
+        if first:
             dealersCards.append(len(deck)-1)
         if add:
             dealersCards.append(index)
@@ -84,7 +136,7 @@ def CardDyslpay(deck, indexs):
 
 def main(deckindex):
     deck = deckShuffle()
-    gameStart()
-    gameLoop(deck, deckindex)
+    bet = gameStart()
+    gameLoop(deck, deckindex, bet)
 
 main(deckindex)
