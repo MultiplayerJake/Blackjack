@@ -18,7 +18,6 @@ deckSuits = list(deckSuits)
 dealersCards = []
 playersCards = []
 
-_welcome_text = "Hi fellow partner! Welcome to the wild frontier. Dust off your boots, tip your hat, and step right up to the bar. To get your winning streak started, we've loaded your saddlebag with 5000 coins. Keep your eyes sharp, play your cards right, and let's see if you can make a fortune out here!"
 _spacing = " " * 2
 _topBorder = "_" * 3
 _bottomBorder = "_" * 2
@@ -31,15 +30,18 @@ def deckShuffle():
     return deck
 
 
-def gameStart():
+def gameStart(money):
     while True:
-        print(_welcome_text)
+        print(f"Hi fellow partner! Welcome to the wild frontier. Dust off your boots, tip your hat, and step right up to the bar. To get your winning streak started, we've loaded your saddlebag with {money} coins. Keep your eyes sharp, play your cards right, and let's see if you can make a fortune out here!")
         print(f"\nYou have {money} coins")
         bet = input("How much do you bet? (1-5000, or QUIT)\n>")
         try:
             bet = int(bet)
             return bet
         except:
+            bet = str(bet)
+            if bet.upper() == "QUIT":
+                exit(0)
             print("Error: Please enter a valid number or 'QUIT' to exit the game.")
         
 
@@ -56,7 +58,7 @@ def gameLoop(deck, deckindex, bet):
         if i == 1:
             deckindex = addPlayerCard(deckindex)
             deckindex = addPlayerCard(deckindex)
-        PCS = playerCardsSum(deck, playersCards)
+        PCS = CardsSum(deck, playersCards)
         CardDyslpay(deck, playersCards)
         print(f"Your cards sum is: {PCS}")
         if PCS > 21:
@@ -66,25 +68,26 @@ def gameLoop(deck, deckindex, bet):
         if playerchoice == "end":
             break
         i += 1
-    endGame()
+    result = endGame(deck, deckindex, bet, PCS, dealersCards)
+    return result
 
-def playerCardsSum(deck, playersCards):
-        playerCardsSum = 0
+def CardsSum(deck, Cards):
+        CardsSum = 0
         aceCount = 0
-        for i in range(len(playersCards)):
-            if deck[playersCards[i]][0] == "J" or deck[playersCards[i]][0] == "Q" or deck[playersCards[i]][0] == "K":
-                playerCardsSum += 10
-            elif deck[playersCards[i]][0] == "A":
+        for i in range(len(Cards)):
+            if deck[Cards[i]][0] == "J" or deck[Cards[i]][0] == "Q" or deck[Cards[i]][0] == "K":
+                CardsSum += 10
+            elif deck[Cards[i]][0] == "A":
                 aceCount += 1
             else:
-                playerCardsSum += (int)(deck[playersCards[i]][0])
+                CardsSum += (int)(deck[Cards[i]][0])
         # Handle aces after calculating other card values
         for i in range(aceCount):
-            if playerCardsSum + 11 > 21:
-                playerCardsSum += 1
+            if CardsSum + 11 > 21:
+                CardsSum += 1
             else:
-                playerCardsSum += 11
-        return playerCardsSum
+                CardsSum += 11
+        return CardsSum
 
 def plyaerchosing(first, deck, deckindex, bet):
     while True:
@@ -127,9 +130,49 @@ def addPlayerCard(deckindex):
     deckindex += 1
     return deckindex
 
-def endGame():
-    print("Game Over. Thanks for playing!")
-    return
+def endGame(deck, deckindex, bet, PCS, dealersCards):
+    dealersCards.remove(len(deck) - 1)
+    dealersCardsSum = CardsSum(deck, dealersCards)
+    while dealersCardsSum <= 17:
+        deckindex = dealerHit(deck, deckindex)
+        dealersCardsSum = CardsSum(deck, dealersCards)
+    print("DEALER:")
+    dealercardsDysplay(deck, deckindex, False, False)
+    print(f"Dealer's cards sum is: {dealersCardsSum}")
+
+    print("PLAYER: ")
+    CardDyslpay(deck, playersCards)
+    print(f"Your cards sum is: {PCS}")
+
+    input("Press Enter to see the result!\n>")
+
+    result = gameResults(deck, bet, PCS, dealersCards)
+
+    return result
+
+def gameResults(deck, bet, PCS, dealersCards):
+    dealersCardsSum = CardsSum(deck, dealersCards)
+    if PCS > 21:
+        print("You busted! Dealer wins.")
+        return -bet
+    elif dealersCardsSum > 21:
+        print("Dealer busted! You win.")
+        return bet
+    elif PCS > dealersCardsSum:
+        print("You win!")
+        return bet
+    elif PCS < dealersCardsSum:
+        print("Dealer wins!")
+        return -bet
+    else:
+        print("It's a tie!")
+        return 0
+
+def dealerHit(deck, deckindex):
+    dealersCards.append(deckindex)
+    deckindex += 1
+    return deckindex
+
 
 def dealercardsDysplay(deck, index, add, first):
         if first:
@@ -157,9 +200,27 @@ def CardDyslpay(deck, indexs):
 
     
 
-def main(deckindex):
+def main(deckindex, money):
     deck = deckShuffle()
-    bet = gameStart()
-    gameLoop(deck, deckindex, bet)
+    bet = gameStart(money)
+    result = gameLoop(deck, deckindex, bet)
+    money += result
+    gamereset(deckindex, money)
 
-main(deckindex)
+def gamereset(deckindex, money):
+    dealersCards.clear()
+    playersCards.clear()
+    print(f"You have {money} coins.")
+    while True:
+        output = input("Do you want to continue? (Y/N)\n>")
+        print(output.upper())
+        if str(output).upper() == "Y":
+            print(money)
+            main(deckindex, money)
+        elif str(output).upper() == "N":
+            exit(0)
+        else:
+            print("You need to type 'Y' for Yes or 'N' for no.")
+        
+
+main(deckindex, money)
