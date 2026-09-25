@@ -64,6 +64,9 @@ def gameLoop(deck, deckindex, bet):
         if PCS > 21:
             print("You busted! Dealer wins.")
             break
+        elif PCS == 21:
+            input("You have 21! Press Enter to continue...\n>")
+            break
         deckindex, playerchoice = plyaerchosing(True, deck, deckindex, bet)
         if playerchoice == "end":
             break
@@ -152,7 +155,10 @@ def endGame(deck, deckindex, bet, PCS, dealersCards):
 
 def gameResults(deck, bet, PCS, dealersCards):
     dealersCardsSum = CardsSum(deck, dealersCards)
-    if PCS > 21:
+    if PCS == 21 and len(playersCards) == 2:
+        print("Blackjack! You win!")
+        return int(bet * 1.5)
+    elif PCS > 21:
         print("You busted! Dealer wins.")
         return -bet
     elif dealersCardsSum > 21:
