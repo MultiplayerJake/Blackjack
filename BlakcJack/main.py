@@ -52,16 +52,39 @@ def gameLoop(deck, deckindex, bet):
             deckindex += 1
         else:
             dealercardsDysplay(deck, deckindex, False, False)
-        print("PLAYER: ")
+        print(f"PLAYER:")
         if i == 1:
             deckindex = addPlayerCard(deckindex)
             deckindex = addPlayerCard(deckindex)
+        PCS = playerCardsSum(deck, playersCards)
         CardDyslpay(deck, playersCards)
-        playerchse = plyaerchosing(True, deck, deckindex, bet)
-        if playerchse == "end":
+        print(f"Your cards sum is: {PCS}")
+        if PCS > 21:
+            print("You busted! Dealer wins.")
+            break
+        deckindex, playerchoice = plyaerchosing(True, deck, deckindex, bet)
+        if playerchoice == "end":
             break
         i += 1
     endGame()
+
+def playerCardsSum(deck, playersCards):
+        playerCardsSum = 0
+        aceCount = 0
+        for i in range(len(playersCards)):
+            if deck[playersCards[i]][0] == "J" or deck[playersCards[i]][0] == "Q" or deck[playersCards[i]][0] == "K":
+                playerCardsSum += 10
+            elif deck[playersCards[i]][0] == "A":
+                aceCount += 1
+            else:
+                playerCardsSum += (int)(deck[playersCards[i]][0])
+        # Handle aces after calculating other card values
+        for i in range(aceCount):
+            if playerCardsSum + 11 > 21:
+                playerCardsSum += 1
+            else:
+                playerCardsSum += 11
+        return playerCardsSum
 
 def plyaerchosing(first, deck, deckindex, bet):
     while True:
@@ -70,23 +93,23 @@ def plyaerchosing(first, deck, deckindex, bet):
         else: 
             choice = input("Do you want to hit or stand? (H/S)\n>")
         if choice.lower() == "h":
-            playerHit(deck, deckindex)
-            break
+            deckindex = playerHit(deck, deckindex)
+            print(deckindex)
+            return deckindex, "continue"
         elif choice.lower() == "s":
             playerStand()
-            return "end"
+            return deckindex, "end"
         elif choice.lower() == "d" and first:
             print("You chose to hit.")
-            playerDouble(deck, deckindex, bet)
-            break
+            deckindex = playerDouble(deck, deckindex, bet)
+            return deckindex, "end"
         else:
             print("Please enter 'H' to hit or 'S' to stand.")
         first = False
 
 def playerHit(deck, deckindex):
     deckindex = addPlayerCard(deckindex)
-    CardDyslpay(deck, playersCards)
-    return
+    return deckindex
 
 def playerStand():
     print("You chose to stand.")
@@ -96,8 +119,8 @@ def playerDouble(deck, deckindex, bet):
     print("You chose to double.")
     bet = bet * 2
     print(f"Your bet is now {bet} coins.")
-    playerHit(deck, deckindex)
-    return
+    deckindex = playerHit(deck, deckindex)
+    return deckindex
 
 def addPlayerCard(deckindex):
     playersCards.append(deckindex)
