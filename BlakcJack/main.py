@@ -37,7 +37,10 @@ def gameStart(money):
         bet = input(f"How much do you bet? (1-{money}, or QUIT)\n>")
         try:
             bet = int(bet)
-            return bet
+            if bet >= 1 and bet <= money:
+                return bet
+            else:
+                print(f"Please enter a number between 1 and {money}.")
         except:
             bet = str(bet)
             if bet.upper() == "QUIT":
@@ -107,29 +110,22 @@ def plyaerchosing(first, deck, deckindex, bet):
             choice = input("Do you want to hit or stand? (H/S)\n>")
         if choice.lower() == "h":
             deckindex = playerHit(deckindex)
-            print(deckindex)
             return deckindex, "continue", bet
         elif choice.lower() == "s":
-            playerStand()
             return deckindex, "end", bet
         elif choice.lower() == "d" and first:
-            print("You chose to hit.")
             deckindex, bet = playerDouble(deckindex, bet)
             return deckindex, "end", bet
         else:
             print("Please enter 'H' to hit or 'S' to stand.")
+            plyaerchosing(first, deck, deckindex, bet)
         first = False
 
 def playerHit(deckindex):
     deckindex = addPlayerCard(deckindex)
     return deckindex
 
-def playerStand():
-    print("You chose to stand.")
-    return
-
 def playerDouble(deckindex, bet):
-    print("You chose to double.")
     bet = bet * 2
     print(f"Your bet is now {bet} coins.")
     deckindex = playerHit(deckindex)
@@ -227,6 +223,10 @@ def main(deckindex, money):
 def gamereset(deckindex, money):
     dealersCards.clear()
     playersCards.clear()
+    if money <= 0:
+        print("You have no more coins left. Game over!")
+        input("Press Enter to exit the game!\n>")
+        exit(0)
     print(f"You have {money} coins.")
     while True:
         output = input("Do you want to continue? (Y/N)\n>")
