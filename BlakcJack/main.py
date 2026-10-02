@@ -6,6 +6,7 @@ _SUITS = ('♥', '♦', '♠', '♣')
 _SINGLEDECK = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 deckindex = 0
 game = True
+asking = 0
 
 
 #Decks:
@@ -25,6 +26,37 @@ playersCards = []
 _SPACING = " " * 2
 _TOPBORDER = "_" * 3
 _BOTTOMBORDER = "_" * 2
+_SETTINGS = "What do you want to change?\n" \
+            "name      | command             | what dose it do. \n" \
+            "Asking    | 'a','ask', 'asking' | Changes asking if you want to continue.\n"
+
+
+def changeAsking():
+    global asking
+    while True:
+        if asking == 1:
+            output = input("Do you want to turn off asking? (Y/N)\n>")
+        if asking == 0:
+            output = input("Do you want to turn on asking? (Y/N)\n>")
+        if output.upper() == "A":
+            asking = asking * -1
+            print("Asking wha changed.")
+            return
+        elif output.upper() == "N":
+            return
+        else:
+            print("Type 'Y' for yes or 'N' for no!")
+
+def settings():
+    global _SETTINGS
+    while True:
+        print(_SETTINGS)
+        output = input(">")
+        print(output)
+        if output.upper() == "A" or output.upper() == "ASK" or output.upper() == "ASKING":
+            changeAsking()
+            return
+
 
 
 def deckShuffle():
@@ -37,7 +69,7 @@ def deckShuffle():
 def gameStart(money):
     while True:
         print(f"\nYou have {money} coins")
-        bet = input(f"How much do you bet? (1-{money}, or QUIT)\n>")
+        bet = input(f"How much do you bet? (1-{money}, quit or setting)\n>")
         try:
             bet = int(bet)
             if bet >= 1 and bet <= money:
@@ -47,6 +79,9 @@ def gameStart(money):
         except:
             if bet.upper() == "QUIT":
                 exit(0)
+            elif bet.upper() == "SETTING" or bet.upper() == "SETTINGS" or bet.upper() == "SET":
+                settings()
+                continue
             print("Error: Please enter a valid number or 'QUIT' to exit the game.")
         
 
@@ -234,6 +269,7 @@ def main(deckindex, money, deck):
 
 
 def gamereset(deckindex, money, deck):
+    global asking
     dealersCards.clear()
     playersCards.clear()
     if money <= 0:
@@ -242,14 +278,17 @@ def gamereset(deckindex, money, deck):
         exit(0)
     print(f"You have {money} coins.")
     while True:
-        output = input("Do you want to continue? (Y/N)\n>")
-        if str(output).upper() == "Y":
-            return
-        elif str(output).upper() == "N":
-            exit(0)
+        if asking == 1:
+            output = input("Do you want to continue? (Y/N)\n>")
+            if str(output).upper() == "Y":
+                return
+            elif str(output).upper() == "N":
+                exit(0)
+            else:
+                print("You need to type 'Y' for Yes or 'N' for no.")
         else:
-            print("You need to type 'Y' for Yes or 'N' for no.")   
+            input("Press Enter to continue to the next round!\n>")
+            return
 
 print(f"Hi fellow partner! Welcome to the wild frontier. Dust off your boots, tip your hat, and step right up to the bar. To get your winning streak started, we've loaded your saddlebag with {money} coins. Keep your eyes sharp, play your cards right, and let's see if you can make a fortune out here!")
 main(deckindex, money, deck = deckShuffle())
-
