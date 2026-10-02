@@ -15,9 +15,11 @@ deckValues = list(deckValues)
 deckSuits = (suit for suit in suits for _ in _singleDeck)
 deckSuits = list(deckSuits)
 
+# Playing cards:
 dealersCards = []
 playersCards = []
 
+# formating:
 _spacing = " " * 2
 _topBorder = "_" * 3
 _bottomBorder = "_" * 2
@@ -27,6 +29,7 @@ def deckShuffle():
     deck = list(zip(deckValues, deckSuits))
     random.shuffle(deck)
     deck.append(("#", "#"))
+    print("\nDeck has been shuffled!\n ")
     return deck
 
 
@@ -60,6 +63,9 @@ def gameLoop(deck, deckindex, bet):
         if i == 1:
             deckindex = addPlayerCard(deckindex)
             deckindex = addPlayerCard(deckindex)
+        if deckindex >= len(deck) - 4:
+            deck = deckShuffle()
+            deckindex = 0
         PCS = CardsSum(deck, playersCards)
         CardDysplay(deck, playersCards)
         print(f"Your cards sum is: {PCS}")
@@ -79,7 +85,7 @@ def gameLoop(deck, deckindex, bet):
         i += 1
     PCS = CardsSum(deck, playersCards)
     result = endGame(deck, deckindex, bet, PCS, dealersCards)
-    return result
+    return result, deck, deckindex
 
 def cardCheck(deck, index):
     ...
@@ -142,6 +148,9 @@ def endGame(deck, deckindex, bet, PCS, dealersCards):
     while dealersCardsSum <= 17:
         deckindex = dealerHit(deckindex)
         dealersCardsSum = CardsSum(deck, dealersCards)
+        if deckindex >= (len(deck) - 1):
+            deck = deckShuffle()
+            deckindex = 0
     print("DEALER:")
     CardDysplay(deck, dealersCards)
     print(f"Dealer's cards sum is: {dealersCardsSum}")
@@ -213,14 +222,16 @@ def CardDysplay(deck, indexs):
 
     
 
-def main(deckindex, money):
-    deck = deckShuffle()
+def main(deckindex, money, deck):
+    if deckindex >= (len(deck) - 4):
+        deck = deckShuffle()
+        deckindex = 0
     bet = gameStart(money)
-    result = gameLoop(deck, deckindex, bet)
+    result, deck, deckindex = gameLoop(deck, deckindex, bet)
     money += result
-    gamereset(deckindex, money)
+    gamereset(deckindex, money, deck)
 
-def gamereset(deckindex, money):
+def gamereset(deckindex, money, deck):
     dealersCards.clear()
     playersCards.clear()
     if money <= 0:
@@ -233,11 +244,16 @@ def gamereset(deckindex, money):
         print(output.upper())
         if str(output).upper() == "Y":
             print(money)
-            main(deckindex, money)
+            main(deckindex, money, deck)
         elif str(output).upper() == "N":
             exit(0)
         else:
             print("You need to type 'Y' for Yes or 'N' for no.")
         
 
-main(deckindex, money)
+main(deckindex, money, deck = deckShuffle())
+
+#Co přidat do hry:
+# - Split.
+# - Insurance.
+# - Bank -- like you can bet more than you have and then pay it back when you win.
