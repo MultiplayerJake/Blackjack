@@ -1,6 +1,6 @@
 # Blackjack
 
-## Co přidat do hry:
+## What to add to the game:
 - Split.
 - Insurance.
-- Bank: like you can bet more than you have and then pay it back when you 
+- Bank: You can bet more than you have and then pay it back when you 
