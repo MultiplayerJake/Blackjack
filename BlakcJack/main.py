@@ -6,8 +6,10 @@ _SUITS = ('♥', '♦', '♠', '♣')
 _SINGLEDECK = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 deckindex = 0
 game = True
-asking = 0
 
+#settings -- 0 = False 1 = True
+isasking = False # by defould is off. Its just what i think is better.
+isInsuranceAsking = True # by default its on.
 
 #Decks:
 deckValues = _SINGLEDECK * 4
@@ -27,25 +29,46 @@ _SPACING = " " * 2
 _TOPBORDER = "_" * 3
 _BOTTOMBORDER = "_" * 2
 _SETTINGS = "What do you want to change?\n" \
-            "name      | command             | what dose it do. \n" \
-            "Asking    | 'a','ask', 'asking' | Changes asking if you want to continue.\n"
+            "Name      | Command             | What dose it do. \n" \
+            "Asking    | 'a', 'ask', 'asking'| Changes asking if you want to continue.\n" \
+            "Insurance | 'I', 'insurance'    | Disables/Enables insurance.\n"
 
 
-def changeAsking():
-    global asking
+def insuranceAsking():
+    global isInsuranceAsking
     while True:
-        if asking == 1:
-            output = input("Do you want to turn off asking? (Y/N)\n>")
-        if asking == 0:
-            output = input("Do you want to turn on asking? (Y/N)\n>")
-        if output.upper() == "A":
-            asking = asking * -1
-            print("Asking what changed.")
+        if isInsuranceAsking == True:
+            output = input("Do you want to turn off insurance asking? (Y/N)\n>")
+        if isInsuranceAsking == False:
+            output = input("Do you want to turn on insurance asking? (Y/N)\n>")
+        if output.upper() == "Y":
+            isInsuranceAsking = not isInsuranceAsking
+            print("Insurance asking changed.")
             return
         elif output.upper() == "N":
+            print("Nothing changed.")
             return
         else:
             print("Type 'Y' for yes or 'N' for no!")
+
+
+def changeAsking():
+    global isasking
+    while True:
+        if isasking == True:
+            output = input("Do you want to turn off asking? (Y/N)\n>")
+        if isasking == False:
+            output = input("Do you want to turn on asking? (Y/N)\n>")
+        if output.upper() == "Y":
+            isasking = not isasking
+            print("Asking changed.")
+            return
+        elif output.upper() == "N":
+            print("Nothing changed.")
+            return
+        else:
+            print("Type 'Y' for yes or 'N' for no!")
+
 
 def settings():
     global _SETTINGS
@@ -56,7 +79,9 @@ def settings():
         if output.upper() == "A" or output.upper() == "ASK" or output.upper() == "ASKING":
             changeAsking()
             return
-
+        if output.upper() == "I" or output.upper() == "INSURANCE":
+            insuranceAsking()
+            return
 
 
 def deckShuffle():
@@ -136,9 +161,10 @@ def gameLoop(deck, deckindex, bet, money):
         dealersCardsSum = CardsSum(deck, dealersCards[1:len(dealersCards)])
         isInsurance = insuranceCheck(deck, dealersCards)
         if isInsurance == 1:
-            output, insurance_cost = insurance(bet)
-            if output == 1:
-                isInsuraceInusred = 1
+            if isInsuranceAsking == True:
+                output, insurance_cost = insurance(bet)
+                if output == 1:
+                    isInsuraceInusred = 1
         if dealersCardsSum == 21:
             if isInsuraceInusred == 1:
                 print("Dealer has 21! But you are insured so you dont lose your bet.")
@@ -310,7 +336,7 @@ def main(deckindex, deck):
 
 def gamereset(deckindex, deck):
     global money
-    global asking
+    global isasking
     dealersCards.clear()
     playersCards.clear()
     if money <= 0:
@@ -319,7 +345,7 @@ def gamereset(deckindex, deck):
         exit(0)
     print(f"You have {money} coins.")
     while True:
-        if asking == 1:
+        if isasking == 1:
             output = input("Do you want to continue? (Y/N)\n>")
             if str(output).upper() == "Y":
                 return
