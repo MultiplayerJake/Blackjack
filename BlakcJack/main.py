@@ -40,7 +40,7 @@ def changeAsking():
             output = input("Do you want to turn on asking? (Y/N)\n>")
         if output.upper() == "A":
             asking = asking * -1
-            print("Asking wha changed.")
+            print("Asking what changed.")
             return
         elif output.upper() == "N":
             return
@@ -83,10 +83,34 @@ def gameStart(money):
                 settings()
                 continue
             print("Error: Please enter a valid number or 'QUIT' to exit the game.")
-        
 
-def gameLoop(deck, deckindex, bet):
+
+def insuranceCheck(deck, dealersCards):
+    print(f"Dealer's first card is: {deck[dealersCards[1]][0]}")
+    if deck[dealersCards[1]][0] == "A" or deck[dealersCards[1]][0] == "J" or deck[dealersCards[1]][0] == "Q" or deck[dealersCards[1]][0] == "K" or deck[dealersCards[1]][0] == "10":
+        if len(dealersCards) <= 3:
+            return 1
+    return 0
+
+
+def insurance(bet):
+    while True:
+        output = input("Do you want insurance? (Y/N)\n>")
+        if output.upper() == "Y" or output.upper() == "YES":
+            insurance_cost = bet / 2
+            return 1, insurance_cost
+        elif output.upper() == "N" or output.upper() == "NO":
+            return 0, insurance_cost
+        else:
+            print("You need to type 'Y' for Yes or 'N' for NO!")
+    return -1
+
+
+
+def gameLoop(deck, deckindex, bet, money):
     i = 1
+    isInsurance = 0
+    isInsuraceInusred = 0
     while True:
         print("DEALER: ???")
         if i == 1:
@@ -109,18 +133,30 @@ def gameLoop(deck, deckindex, bet):
         elif PCS == 21:
             input("You have 21! Press Enter to continue...\n>")
             break
-        dealersCardsSum = CardsSum(deck, dealersCards[1:len(dealersCards)-1])
+        dealersCardsSum = CardsSum(deck, dealersCards[1:len(dealersCards)])
+        isInsurance = insuranceCheck(deck, dealersCards)
+        if isInsurance == 1:
+            output, insurance_cost = insurance(bet)
+            if output == 1:
+                isInsuraceInusred = 1
         if dealersCardsSum == 21:
+            if isInsuraceInusred == 1:
+                print("Dealer has 21! But you are insured so you dont lose your bet.")
+                break 
             print("Dealer has 21!")
             break
+        else:
+            if isInsuraceInusred == 1:
+                print("Dealer does not have 21!")
+                money -= int(insurance_cost)
+                print(f"You lost {int(insurance_cost)} coins for insurance. You have {money} coins left.")
         deckindex, playerchoiced, bet = playerChoice(deck, deckindex, bet)
         if playerchoiced == "end":
             break
         i += 1
     PCS = CardsSum(deck, playersCards)
-    result = endGame(deck, deckindex, bet, PCS, dealersCards)
-    return result, deck, deckindex
-
+    result = endGame(deck, deckindex, bet, PCS, dealersCards, isInsuraceInusred)
+    return result, deck, deckindex, money
 
 def CardsSum(deck, Cards):
         CardsSum = 0
@@ -171,7 +207,7 @@ def addPlayerCard(deckindex):
     return deckindex
 
 
-def endGame(deck, deckindex, bet, PCS, dealersCards):
+def endGame(deck, deckindex, bet, PCS, dealersCards, insured):
     dealersCards.remove(len(deck) - 1)
     dealerSum = CardsSum(deck, dealersCards)
     if PCS > 21:
@@ -192,12 +228,12 @@ def endGame(deck, deckindex, bet, PCS, dealersCards):
 
     input("Press Enter to see the result!\n>")
 
-    result = gameResults(deck, bet, PCS, dealersCards)
+    result = gameResults(deck, bet, PCS, dealersCards, insured)
 
     return result
 
 
-def gameResults(deck, bet, PCS, dealersCards):
+def gameResults(deck, bet, PCS, dealersCards, insured):
     dealerSum = CardsSum(deck, dealersCards)
     if PCS == 21 and len(playersCards) == 2:
         print("Blackjack! You win!")
@@ -209,6 +245,8 @@ def gameResults(deck, bet, PCS, dealersCards):
         print("Dealer busted! You win.")
         return bet
     elif dealerSum == 21 and len(dealersCards) == 2:
+        if insured == 1:
+            return 0
         print("Dealer has Blackjack! Dealer wins.")
         return -bet
     elif PCS > dealerSum:
@@ -263,7 +301,7 @@ def main(deckindex, money, deck):
             print("\nDeck has been shuffled!\n ")
             deckindex = 0
         bet = gameStart(money)
-        result, deck, deckindex = gameLoop(deck, deckindex, bet)
+        result, deck, deckindex, money = gameLoop(deck, deckindex, bet, money)
         money += result
         gamereset(deckindex, money, deck)
 
