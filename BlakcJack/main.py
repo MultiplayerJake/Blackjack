@@ -7,9 +7,11 @@ _SINGLEDECK = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 deckindex = 0
 game = True
 
+
 #settings -- 0 = False 1 = True
 isasking = False # by defould is off. Its just what i think is better.
 isInsuranceAsking = True # by default its on.
+
 
 #Decks:
 deckValues = _SINGLEDECK * 4
@@ -132,7 +134,6 @@ def insurance(bet):
     return -1
 
 
-
 def gameLoop(deck, deckindex, bet, money):
     i = 1
     isInsurance = 0
@@ -185,6 +186,7 @@ def gameLoop(deck, deckindex, bet, money):
     PCS = CardsSum(deck, playersCards)
     result = endGame(deck, deckindex, bet, PCS, dealersCards, isInsuraceInusred)
     return result, deck, deckindex, money
+
 
 def CardsSum(deck, Cards):
         CardsSum = 0
@@ -358,6 +360,7 @@ def gamereset(deckindex, deck):
         else:
             input("Press Enter to continue to the next round!\n>")
             return
+
 
 print(f"Hi fellow partner! Welcome to the wild frontier. Dust off your boots, tip your hat, and step right up to the bar. To get your winning streak started, we've loaded your saddlebag with {money} coins. Keep your eyes sharp, play your cards right, and let's see if you can make a fortune out here!")
 main(deckindex, deck = deckShuffle())
