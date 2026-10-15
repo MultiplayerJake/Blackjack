@@ -119,6 +119,7 @@ def insuranceCheck(deck, dealersCards):
 
 
 def insurance(bet):
+    insurance_cost = 0
     while True:
         output = input("Do you want insurance? (Y/N)\n>")
         if output.upper() == "Y" or output.upper() == "YES":
@@ -159,23 +160,24 @@ def gameLoop(deck, deckindex, bet, money):
             input("You have 21! Press Enter to continue...\n>")
             break
         dealersCardsSum = CardsSum(deck, dealersCards[1:len(dealersCards)])
-        isInsurance = insuranceCheck(deck, dealersCards)
-        if isInsurance == 1:
-            if isInsuranceAsking == True:
-                output, insurance_cost = insurance(bet)
-                if output == 1:
-                    isInsuraceInusred = 1
-        if dealersCardsSum == 21:
-            if isInsuraceInusred == 1:
-                print("Dealer has 21! But you are insured so you dont lose your bet.")
-                break 
-            print("Dealer has 21!")
-            break
-        else:
-            if isInsuraceInusred == 1:
-                print("Dealer does not have 21!")
-                money -= int(insurance_cost)
-                print(f"You lost {int(insurance_cost)} coins for insurance. You have {money} coins left.")
+        if i == 1:
+            isInsurance = insuranceCheck(deck, dealersCards)
+            if isInsurance == 1:
+                if isInsuranceAsking == True:
+                    output, insurance_cost = insurance(bet)
+                    if output == 1:
+                        isInsuraceInusred = 1
+            if dealersCardsSum == 21:
+                if isInsuraceInusred == 1:
+                    print("Dealer has 21! But you are insured so you dont lose your bet.")
+                    break 
+                print("Dealer has 21!")
+                break
+            else:
+                if isInsuraceInusred == 1:
+                    print("Dealer does not have 21!")
+                    money -= int(insurance_cost)
+                    print(f"You lost {int(insurance_cost)} coins for insurance. You have {money} coins left.")
         deckindex, playerchoiced, bet = playerChoice(deck, deckindex, bet)
         if playerchoiced == "end":
             break
