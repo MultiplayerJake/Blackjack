@@ -66,7 +66,8 @@ def deckShuffle():
     return deck
 
 
-def gameStart(money):
+def gameStart():
+    global money
     while True:
         print(f"\nYou have {money} coins")
         bet = input(f"How much do you bet? (1-{money}, quit or setting)\n>")
@@ -218,6 +219,7 @@ def endGame(deck, deckindex, bet, PCS, dealersCards, insured):
         if deckindex >= (len(deck) - 1):
             deck = deckShuffle()
             deckindex = 0
+
     print("DEALER:")
     displayCards(deck, dealersCards)
     print(f"Dealer's cards sum is: {dealerSum}")
@@ -294,7 +296,8 @@ def displayCards(deck, indexs):
 
     
 
-def main(deckindex, money, deck):
+def main(deckindex, deck):
+    global money
     while money > 0:
         if deckindex >= (len(deck) - 4):
             deck = deckShuffle()
@@ -303,10 +306,11 @@ def main(deckindex, money, deck):
         bet = gameStart(money)
         result, deck, deckindex, money = gameLoop(deck, deckindex, bet, money)
         money += result
-        gamereset(deckindex, money, deck)
+        gamereset(deckindex, deck)
 
 
-def gamereset(deckindex, money, deck):
+def gamereset(deckindex, deck):
+    global money
     global asking
     dealersCards.clear()
     playersCards.clear()
@@ -329,4 +333,4 @@ def gamereset(deckindex, money, deck):
             return
 
 print(f"Hi fellow partner! Welcome to the wild frontier. Dust off your boots, tip your hat, and step right up to the bar. To get your winning streak started, we've loaded your saddlebag with {money} coins. Keep your eyes sharp, play your cards right, and let's see if you can make a fortune out here!")
-main(deckindex, money, deck = deckShuffle())
+main(deckindex, deck = deckShuffle())
