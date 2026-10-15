@@ -45,10 +45,10 @@ def insuranceAsking():
             output = input("Do you want to turn on insurance asking? (Y/N)\n>")
         if output.upper() == "Y":
             isInsuranceAsking = not isInsuranceAsking
-            print("Insurance asking changed.")
+            print(f"Insurance asking changed. Now its {isInsuranceAsking}.")
             return
         elif output.upper() == "N":
-            print("Nothing changed.")
+            print(f"Nothing changed. Insurance asking is still {isInsuranceAsking}.")
             return
         else:
             print("Type 'Y' for yes or 'N' for no!")
@@ -63,10 +63,10 @@ def changeAsking():
             output = input("Do you want to turn on asking? (Y/N)\n>")
         if output.upper() == "Y":
             isasking = not isasking
-            print("Asking changed.")
+            print(f"Asking changed. Now its {isasking}.")
             return
         elif output.upper() == "N":
-            print("Nothing changed.")
+            print(f"Nothing changed. Asking is still {isasking}.")
             return
         else:
             print("Type 'Y' for yes or 'N' for no!")
