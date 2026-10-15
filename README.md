@@ -1,4 +1,8 @@
 # Blackjack
+## Features:
+- Insurance
+- Double
+- Settings
 
 ## What to add to the game:
 - Split.

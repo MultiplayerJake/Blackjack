@@ -33,7 +33,7 @@ _BOTTOMBORDER = "_" * 2
 _SETTINGS = "What do you want to change?\n" \
             "Name      | Command             | What dose it do. \n" \
             "Asking    | 'a', 'ask', 'asking'| Changes asking if you want to continue.\n" \
-            "Insurance | 'I', 'insurance'    | Disables/Enables insurance.\n"
+            "Insurance | 'I', 'insurance'    | Disables/Enables insurance asking.\n"
 
 
 def insuranceAsking():
