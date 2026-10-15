@@ -66,8 +66,7 @@ def deckShuffle():
     return deck
 
 
-def gameStart():
-    global money
+def gameStart(money):
     while True:
         print(f"\nYou have {money} coins")
         bet = input(f"How much do you bet? (1-{money}, quit or setting)\n>")
