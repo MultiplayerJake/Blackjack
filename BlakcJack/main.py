@@ -198,7 +198,8 @@ def CardsSum(deck, Cards):
                 aceCount += 1
             else:
                 CardsSum += (int)(deck[Cards[i]][0])
-            CardsSum += aceCount
+            print(f"CardsSum: {CardsSum}, AceCount: {aceCount}, CardValue: {deck[Cards[i]][0]}")
+        CardsSum += aceCount
         while aceCount > 0 and CardsSum + 10 <= 21:
             CardsSum += 10
             aceCount -= 1
@@ -217,18 +218,25 @@ def playerChoice(deck, deckindex, bet):
         elif choice.lower() == "s":
             return deckindex, "end", bet
         elif choice.lower() == "d" and len(playersCards) == 2:
-            deckindex, bet = playerDouble(deckindex, bet)
-            return deckindex, "end", bet
+            deckindex, bet, diddouble = playerDouble(deckindex, bet)
+            if diddouble == True:
+                return deckindex, "end", bet
+            else:
+                return deckindex, "continue", bet
         else:
             print("Please enter 'H' to hit or 'S' to stand.")
             playerChoice( deck, deckindex, bet)
 
 
 def playerDouble(deckindex, bet):
-    bet = bet * 2
-    print(f"Your bet is now {bet} coins.")
-    deckindex = addPlayerCard(deckindex)
-    return deckindex, bet
+    if money < bet * 2:
+        print("You don't have enough money to double your bet.")
+        return deckindex, bet, False
+    else:
+        bet = bet * 2
+        print(f"Your bet is now {bet} coins.")
+        deckindex = addPlayerCard(deckindex)
+        return deckindex, bet, True
 
 
 def addPlayerCard(deckindex):
