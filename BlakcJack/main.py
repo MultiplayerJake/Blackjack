@@ -338,7 +338,6 @@ def displayCards(deck, indexs):
     for i in range(len(indexs)):
         print(f"|{_BOTTOMBORDER}{deck[indexs[i]][1]}|",end=" ")
     print("\n",end="")
-
     
 
 def main(deckindex, deck):
