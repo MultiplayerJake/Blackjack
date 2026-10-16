@@ -125,6 +125,9 @@ def insurance(bet):
     while True:
         output = input("Do you want insurance? (Y/N)\n>")
         if output.upper() == "Y" or output.upper() == "YES":
+            if money <= bet + (bet / 2):
+                print("You don't have enough money for insurance.")
+                return 0, insurance_cost
             insurance_cost = bet / 2
             return 1, insurance_cost
         elif output.upper() == "N" or output.upper() == "NO":
@@ -151,34 +154,10 @@ def gameLoop(deck, deckindex, bet, money):
         if deckindex >= len(deck) - 4:
             deck = deckShuffle()
             deckindex = 0
-        PCS = CardsSum(deck, playersCards)
         displayCards(deck, playersCards)
-        print(f"Your cards sum is: {PCS}")
-        if PCS > 21:
-            print("You busted! Dealer wins.")
+        gameOver = gameLoopChecking(deck, i, bet, money)
+        if gameOver == True:
             break
-        elif PCS == 21:
-            input("You have 21! Press Enter to continue...\n>")
-            break
-        dealersCardsSum = CardsSum(deck, dealersCards[1:len(dealersCards)])
-        if i == 1:
-            isInsurance = insuranceCheck(deck, dealersCards)
-            if isInsurance == 1:
-                if isInsuranceAsking == True:
-                    output, insurance_cost = insurance(bet)
-                    if output == 1:
-                        isInsuraceInusred = 1
-            if dealersCardsSum == 21:
-                if isInsuraceInusred == 1:
-                    print("Dealer has 21! But you are insured so you dont lose your bet.")
-                    break 
-                print("Dealer has 21!")
-                break
-            else:
-                if isInsuraceInusred == 1:
-                    print("Dealer does not have 21!")
-                    money -= int(insurance_cost)
-                    print(f"You lost {int(insurance_cost)} coins for insurance. You have {money} coins left.")
         deckindex, playerchoiced, bet = playerChoice(deck, deckindex, bet)
         if playerchoiced == "end":
             break
@@ -186,6 +165,39 @@ def gameLoop(deck, deckindex, bet, money):
     PCS = CardsSum(deck, playersCards)
     result = endGame(deck, deckindex, bet, PCS, dealersCards, isInsuraceInusred)
     return result, deck, deckindex, money
+
+
+def gameLoopChecking(deck, i, bet, money):
+    isInsurance = 0
+    isInsuraceInusred = 0
+    PCS = CardsSum(deck, playersCards)
+    print(f"Your cards sum is: {PCS}")
+    if PCS > 21:
+        print("You busted! Dealer wins.")
+        return True
+    elif PCS == 21:
+        input("You have 21! Press Enter to continue...\n>")
+        return True
+    dealersCardsSum = CardsSum(deck, dealersCards[1:len(dealersCards)])
+    if i == 1:
+        isInsurance = insuranceCheck(deck, dealersCards)
+        if isInsurance == 1:
+            if isInsuranceAsking == True:
+                output, insurance_cost = insurance(bet)
+                if output == 1:
+                    isInsuraceInusred = 1
+        if dealersCardsSum == 21:
+            if isInsuraceInusred == 1:
+                print("Dealer has 21! But you are insured so you dont lose your bet.")
+                return True 
+            input("Dealer has 21! Press Enter to continue...\n>")
+            return True
+        else:
+            if isInsuraceInusred == 1:
+                print("Dealer does not have 21!")
+                money -= int(insurance_cost)
+                print(f"You lost {int(insurance_cost)} coins for insurance. You have {money} coins left.")
+    return False, isInsuraceInusred
 
 
 def CardsSum(deck, Cards):
@@ -198,7 +210,6 @@ def CardsSum(deck, Cards):
                 aceCount += 1
             else:
                 CardsSum += (int)(deck[Cards[i]][0])
-            print(f"CardsSum: {CardsSum}, AceCount: {aceCount}, CardValue: {deck[Cards[i]][0]}")
         CardsSum += aceCount
         while aceCount > 0 and CardsSum + 10 <= 21:
             CardsSum += 10
@@ -210,7 +221,7 @@ def playerChoice(deck, deckindex, bet):
     while True:
         if len(playersCards) == 2:
             choice = input("Do you want to hit or stand or Double? (H/S/D)\n>")
-        else: 
+        else:
             choice = input("Do you want to hit or stand? (H/S)\n>")
         if choice.lower() == "h":
             deckindex = addPlayerCard(deckindex)
@@ -225,7 +236,6 @@ def playerChoice(deck, deckindex, bet):
                 return deckindex, "continue", bet
         else:
             print("Please enter 'H' to hit or 'S' to stand.")
-            playerChoice( deck, deckindex, bet)
 
 
 def playerDouble(deckindex, bet):
