@@ -77,7 +77,6 @@ def settings():
     while True:
         print(_SETTINGS)
         output = input(">")
-        print(output)
         if output.upper() == "A" or output.upper() == "ASK" or output.upper() == "ASKING":
             changeAsking()
             return
@@ -259,7 +258,7 @@ def endGame(deck, deckindex, bet, PCS, dealersCards, insured):
     dealerSum = CardsSum(deck, dealersCards)
     if PCS > 21:
         return -bet
-    while dealerSum <= 17:
+    while dealerSum < 17:
         deckindex = dealerHit(deckindex)
         dealerSum = CardsSum(deck, dealersCards)
         if deckindex >= (len(deck) - 1):
