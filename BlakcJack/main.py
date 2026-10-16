@@ -139,7 +139,6 @@ def insurance(bet):
 
 def gameLoop(deck, deckindex, bet, money):
     i = 1
-    isInsurance = 0
     isInsuraceInusred = 0
     while True:
         print("DEALER: ???")
@@ -155,7 +154,7 @@ def gameLoop(deck, deckindex, bet, money):
             deck = deckShuffle()
             deckindex = 0
         displayCards(deck, playersCards)
-        gameOver = gameLoopChecking(deck, i, bet, money)
+        gameOver, isInsuraceInusred = gameLoopChecking(deck, i, bet, money)
         if gameOver == True:
             break
         deckindex, playerchoiced, bet = playerChoice(deck, deckindex, bet)
@@ -174,10 +173,10 @@ def gameLoopChecking(deck, i, bet, money):
     print(f"Your cards sum is: {PCS}")
     if PCS > 21:
         print("You busted! Dealer wins.")
-        return True
+        return True, isInsuraceInusred
     elif PCS == 21:
         input("You have 21! Press Enter to continue...\n>")
-        return True
+        return True, isInsuraceInusred
     dealersCardsSum = CardsSum(deck, dealersCards[1:len(dealersCards)])
     if i == 1:
         isInsurance = insuranceCheck(deck, dealersCards)
@@ -189,9 +188,9 @@ def gameLoopChecking(deck, i, bet, money):
         if dealersCardsSum == 21:
             if isInsuraceInusred == 1:
                 print("Dealer has 21! But you are insured so you dont lose your bet.")
-                return True 
+                return True, isInsuraceInusred
             input("Dealer has 21! Press Enter to continue...\n>")
-            return True
+            return True, isInsuraceInusred
         else:
             if isInsuraceInusred == 1:
                 print("Dealer does not have 21!")
